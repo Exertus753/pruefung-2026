@@ -1,0 +1,15 @@
+﻿target/
+tools/
+heroZeroDb/
+*.log
+*.class
+*.pdf
+*.zip
+.vscode/
+.idea/
+.settings/
+.project
+.classpath
+.nbproject/
+.DS_Store
+Thumbs.db

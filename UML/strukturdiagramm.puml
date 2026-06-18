@@ -1,0 +1,113 @@
+@startuml
+
+' Klassen für die Modelle
+class User {
+    - Long id
+    - String username
+    - String password
+    - String role
+    + getId() : Long
+    + getUsername() : String
+    + getPassword() : String
+    + getRole() : String
+}
+
+class EmissionRecord {
+    - Long id
+    - String countryName
+    - String countryCode
+    - int year
+    - Double co2Value
+    - String status
+    - User scientist
+    + getId() : Long
+    + getCountryName() : String
+    + getCountryCode() : String
+    + getYear() : int
+    + getCo2Value() : Double
+    + getStatus() : String
+    + getScientist() : User
+}
+
+' Utility-Klassen
+class DbManager {
+    - EntityManagerFactory emf
+    + getEntityManager() : EntityManager
+}
+
+class DbInit {
+    - DbManager dbManager
+    + init(init : Object) : void
+}
+
+' CDI Beans / Controller-Klassen
+class CitizenBean {
+    - String selectedCountry
+    - List<String> countries
+    - EmissionRecord latestRecord
+    - List<EmissionRecord> records
+    - DbManager dbManager
+    + init() : void
+    + onCountryChange() : void
+    + getSelectedCountry() : String
+    + setSelectedCountry(selectedCountry : String) : void
+    + getCountries() : List<String>
+    + getLatestRecord() : EmissionRecord
+    + getRecords() : List<EmissionRecord>
+}
+
+class LoginBean {
+    - String username
+    - String password
+    - User currentUser
+    - DbManager dbManager
+    + login() : String
+    + logout() : String
+    + isLoggedIn() : boolean
+    + isScientist() : boolean
+    + isPublisher() : boolean
+    + getUsername() : String
+    + setUsername(username : String) : void
+    + getPassword() : String
+    + setPassword(password : String) : void
+    + getCurrentUser() : User
+}
+
+class ScientistBean {
+    - String selectedCountry
+    - String countryCode
+    - int year
+    - Double co2Value
+    - List<EmissionRecord> pendingRecords
+    - DbManager dbManager
+    - LoginBean loginBean
+    + init() : void
+    + addRecord() : void
+    + editRecord(record : EmissionRecord) : void
+    + approveRecord(record : EmissionRecord) : void
+    + rejectRecord(record : EmissionRecord) : void
+    + getSelectedCountry() : String
+    + setSelectedCountry(selectedCountry : String) : void
+    + getCountryCode() : String
+    + setCountryCode(countryCode : String) : void
+    + getYear() : int
+    + setYear(year : int) : void
+    + getCo2Value() : Double
+    + setCo2Value(co2Value : Double) : void
+    + getPendingRecords() : List<EmissionRecord>
+}
+
+' Beziehungen
+CitizenBean --> DbManager
+LoginBean --> DbManager
+ScientistBean --> DbManager
+DbInit --> DbManager
+
+CitizenBean --> EmissionRecord
+ScientistBean --> EmissionRecord
+ScientistBean --> User
+LoginBean --> User
+DbInit --> User
+DbInit --> EmissionRecord
+
+@enduml
