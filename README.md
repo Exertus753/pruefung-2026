@@ -72,7 +72,7 @@ Falls Sie das Projekt direkt über die im Repository enthaltenen portablen Tools
 ### Schritt 1: MariaDB-Datenbank starten
 Öffnen Sie ein PowerShell-Terminal im Projektordner und führen Sie aus:
 ```powershell
-& "C:\Users\tief_\Desktop\Prüfung\tools\mariadb\bin\mysqld.exe" --datadir="C:\Users\tief_\Desktop\Prüfung\tools\mariadb\data" --port=3306 --console
+& "C:\Users\(your_user)\Desktop\Prüfung\tools\mariadb\bin\mysqld.exe" --datadir="C:\Users\(your_user)\Desktop\Prüfung\tools\mariadb\data" --port=3306 --console
 ```
 *(Lassen Sie dieses Terminal geöffnet)*
 
@@ -80,8 +80,8 @@ Falls Sie das Projekt direkt über die im Repository enthaltenen portablen Tools
 Öffnen Sie ein **zweites** PowerShell-Terminal im Projektordner und führen Sie aus:
 ```powershell
 $env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-17.0.19.10-hotspot"
-$env:CATALINA_HOME="C:\Users\tief_\Desktop\Prüfung\tools\tomee"
-& "C:\Users\tief_\Desktop\Prüfung\tools\tomee\bin\catalina.bat" run
+$env:CATALINA_HOME="C:\Users\(your_user)\Desktop\Prüfung\tools\tomee"
+& "C:\Users\(your_user)\Desktop\Prüfung\tools\tomee\bin\catalina.bat" run
 ```
 *(Lassen Sie auch dieses Terminal geöffnet)*
 
