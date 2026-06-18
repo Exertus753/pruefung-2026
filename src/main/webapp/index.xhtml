@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Like Hero To Zero - CO2-Emissionsdaten</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <div class="header">
+        <a href="index.xhtml" class="logo">Like Hero To Zero</a>
+        <h:link value="Wissenschaftler-Login" outcome="login" class="nav-link" />
+    </div>
+
+    <div class="main-content">
+        <div class="card">
+            <h2 class="card-title">Globale CO2-Emissionsdaten abfragen</h2>
+            <h:form id="citizenForm">
+                <div class="form-group">
+                    <h:outputLabel value="Land auswählen:" for="countrySelect" class="form-label" />
+                    <h:selectOneMenu id="countrySelect" value="#{citizenBean.selectedCountry}" class="form-control">
+                        <f:selectItem itemLabel="-- Bitte ein Land wählen --" itemValue="" />
+                        <f:selectItems value="#{citizenBean.countries}" />
+                        <f:ajax render="dataPanel" />
+                    </h:selectOneMenu>
+                </div>
+
+                <h:panelGroup id="dataPanel">
+                    <h:panelGroup rendered="#{not empty citizenBean.selectedCountry}">
+                        
+                        <h:panelGroup rendered="#{not empty citizenBean.latestRecord}">
+                            <div class="highlight-box">
+                                <div>
+                                    <h3 style="font-weight: 600; margin-bottom: 0.25rem;">Neueste CO2-Emissionen für #{citizenBean.selectedCountry}</h3>
+                                    <p style="color: #94a3b8; font-size: 0.875rem;">Jahr: #{citizenBean.latestRecord.year}</p>
+                                </div>
+                                <div class="highlight-value">
+                                    <h:outputText value="#{citizenBean.latestRecord.co2Value}">
+                                        <f:convertNumber pattern="#,##0.0" />
+                                    </h:outputText> kt
+                                </div>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{empty citizenBean.latestRecord}">
+                            <div class="alert alert-info">
+                                Keine freigegebenen CO2-Daten für dieses Land verfügbar.
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not empty citizenBean.records}">
+                            <h3 class="card-title" style="margin-top: 2rem;">Historischer Überblick</h3>
+                            <div class="table-container">
+                                <h:dataTable value="#{citizenBean.records}" var="record" class="data-table">
+                                    <h:column>
+                                        <f:facet name="header">Jahr</f:facet>
+                                        #{record.year}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">CO2-Ausstoß (kt)</f:facet>
+                                        <h:outputText value="#{record.co2Value}">
+                                            <f:convertNumber pattern="#,##0.0" />
+                                        </h:outputText>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Status</f:facet>
+                                        <span class="status-badge status-approved">Freigegeben</span>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:form>
+        </div>
+    </div>
+
+    <div class="footer">
+    </div>
+</h:body>
+</html>

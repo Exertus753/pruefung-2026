@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Dashboard - Like Hero To Zero</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <h:form id="navForm">
+        <div class="header">
+            <a href="index.xhtml" class="logo">Like Hero To Zero</a>
+            <h:panelGroup rendered="#{loginBean.isLoggedIn()}">
+                <span style="color: #94a3b8; margin-right: 1.5rem;">
+                    Angemeldet als: <strong style="color: #f8fafc;">#{loginBean.loggedInUser.username}</strong> (#{loginBean.loggedInUser.role == 'SCIENTIST' ? 'Wissenschaftler' : 'Herausgeber'})
+                </span>
+                <h:commandButton value="Abmelden" action="#{loginBean.logout}" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.875rem;" />
+            </h:panelGroup>
+        </div>
+    </h:form>
+
+    <div class="main-content">
+        <h:panelGroup rendered="#{!loginBean.isLoggedIn()}">
+            <div class="card" style="max-width: 500px; margin: 4rem auto; text-align: center;">
+                <h2 class="card-title" style="border-left: none; padding-left: 0; color: #ef4444;">Zugriff verweigert</h2>
+                <p style="margin-bottom: 2rem; color: #94a3b8;">Sie müssen sich zuerst anmelden, um auf diesen Bereich zuzugreifen.</p>
+                <h:link value="Zum Login" outcome="login" class="btn btn-primary" style="display: inline-block;" />
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{loginBean.isLoggedIn()}">
+            <h:panelGroup rendered="#{loginBean.isScientist()}">
+                <div class="grid-2">
+                    <div class="card">
+                        <h2 class="card-title">
+                            <h:outputText value="#{scientistBean.selectedRecord == null ? 'Neuen CO2-Eintrag hinzufügen' : 'CO2-Eintrag bearbeiten'}" />
+                        </h2>
+                        
+                        <h:form id="scientistForm">
+                            <div class="form-group">
+                                <h:outputLabel value="Land Name" for="cname" class="form-label" />
+                                <h:inputText id="cname" value="#{scientistBean.countryName}" required="true" requiredMessage="Landname ist erforderlich." class="form-control" />
+                                <h:message for="cname" style="color: #ef4444; font-size: 0.875rem; display: block; margin-top: 0.25rem;" />
+                            </div>
+
+                            <div class="form-group">
+                                <h:outputLabel value="Ländercode (z.B. DE)" for="ccode" class="form-label" />
+                                <h:inputText id="ccode" value="#{scientistBean.countryCode}" required="true" requiredMessage="Ländercode ist erforderlich." class="form-control" />
+                                <h:message for="ccode" style="color: #ef4444; font-size: 0.875rem; display: block; margin-top: 0.25rem;" />
+                            </div>
+
+                            <div class="form-group">
+                                <h:outputLabel value="Jahr" for="cyear" class="form-label" />
+                                <h:inputText id="cyear" value="#{scientistBean.year}" required="true" requiredMessage="Jahr ist erforderlich." converterMessage="Das Jahr muss eine Zahl sein." class="form-control" />
+                                <h:message for="cyear" style="color: #ef4444; font-size: 0.875rem; display: block; margin-top: 0.25rem;" />
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 2rem;">
+                                <h:outputLabel value="CO2-Wert (in kt)" for="cvalue" class="form-label" />
+                                <h:inputText id="cvalue" value="#{scientistBean.co2Value}" required="true" requiredMessage="CO2-Wert ist erforderlich." converterMessage="Der CO2-Wert muss eine Zahl sein." class="form-control" />
+                                <h:message for="cvalue" style="color: #ef4444; font-size: 0.875rem; display: block; margin-top: 0.25rem;" />
+                            </div>
+
+                            <div class="action-buttons">
+                                <h:commandButton value="Speichern" action="#{scientistBean.save}" class="btn btn-primary" />
+                                <h:commandButton value="Abbrechen" action="#{scientistBean.cancel}" immediate="true" rendered="#{scientistBean.selectedRecord != null}" class="btn btn-secondary" />
+                            </div>
+                        </h:form>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Alle CO2-Einträge verwalten</h2>
+                        <h:form id="recordsListForm">
+                            <h:panelGroup rendered="#{empty scientistBean.allRecords}">
+                                <p style="color: #94a3b8;">Keine Einträge in der Datenbank.</p>
+                            </h:panelGroup>
+                            
+                            <h:panelGroup rendered="#{not empty scientistBean.allRecords}">
+                                <div class="table-container" style="max-height: 480px; overflow-y: auto;">
+                                    <h:dataTable value="#{scientistBean.allRecords}" var="record" class="data-table">
+                                        <h:column>
+                                            <f:facet name="header">Land</f:facet>
+                                            #{record.countryName}
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Jahr</f:facet>
+                                            #{record.year}
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Wert (kt)</f:facet>
+                                            <h:outputText value="#{record.co2Value}">
+                                                <f:convertNumber pattern="#,##0.0" />
+                                            </h:outputText>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Status</f:facet>
+                                            <span class="status-badge #{record.status == 'APPROVED' ? 'status-approved' : 'status-pending'}">
+                                                #{record.status == 'APPROVED' ? 'Freigegeben' : 'Ausstehend'}
+                                            </span>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Aktionen</f:facet>
+                                            <div class="action-buttons">
+                                                <h:commandButton value="Bearb." action="#{scientistBean.edit(record)}" class="btn btn-success" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" />
+                                                <h:commandButton value="Lösch." action="#{scientistBean.delete(record)}" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" />
+                                            </div>
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+                            </h:panelGroup>
+                        </h:form>
+                    </div>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{loginBean.isPublisher()}">
+                <div class="card">
+                    <h2 class="card-title">Herausgeber-Dashboard - Ausstehende Freigaben</h2>
+                    <h:form id="publisherForm">
+                        <h:panelGroup rendered="#{empty scientistBean.pendingRecords}">
+                            <div class="alert alert-info" style="margin-bottom: 0;">
+                                Keine ausstehenden Einträge zur Freigabe vorhanden.
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not empty scientistBean.pendingRecords}">
+                            <div class="table-container">
+                                <h:dataTable value="#{scientistBean.pendingRecords}" var="record" class="data-table">
+                                    <h:column>
+                                        <f:facet name="header">Land</f:facet>
+                                        #{record.countryName} (#{record.countryCode})
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Jahr</f:facet>
+                                        #{record.year}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">CO2-Ausstoß (kt)</f:facet>
+                                        <h:outputText value="#{record.co2Value}">
+                                            <f:convertNumber pattern="#,##0.0" />
+                                        </h:outputText>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Eingetragen von</f:facet>
+                                        #{record.scientist.username}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Aktionen</f:facet>
+                                        <div class="action-buttons">
+                                            <h:commandButton value="Freigeben" action="#{scientistBean.approve(record)}" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" />
+                                            <h:commandButton value="Ablehnen" action="#{scientistBean.reject(record)}" class="btn btn-danger" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" />
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                        </h:panelGroup>
+                    </h:form>
+                </div>
+            </h:panelGroup>
+        </h:panelGroup>
+    </div>
+
+    <div class="footer">
+    </div>
+</h:body>
+</html>
