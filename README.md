@@ -30,7 +30,7 @@ Um das Projekt lokal zu bauen und auszuführen, benötigen Sie:
 
 ---
 
-## 3. Installation und Ausführung
+## 3. Installation und Ausführung (Manuell)
 
 ### Schritt 1: Repository klonen
 Klonen Sie das Repository auf Ihr lokales System:
@@ -40,7 +40,7 @@ cd pruefung-2026
 ```
 
 ### Schritt 2: Datenbank vorbereiten
-*   Stellen Sie sicher, dass Ihre MySQL/MariaDB-Instanz auf Port `3306` aktiv ist.
+*   Stellen Sie sicher, dass Ihre MySQL/MariaDB-Instanz auf Port `3306` active ist.
 *   Die DataSource-Konfiguration befindet sich im Projekt unter [resources.xml](file:///c:/Users/tief_/Desktop/Prüfung/src/main/webapp/WEB-INF/resources.xml). 
 *   Standardmäßig verbindet sich das Projekt mit der Datenbank `herozero` über den Benutzer `root` ohne Passwort.
 *   > [!IMPORTANT]
@@ -65,7 +65,33 @@ Die fertige Datei `herozero.war` befindet sich nach dem erfolgreichen Build im O
 
 ---
 
-## 4. Testen der Rollen und Funktionalitäten
+## 4. Ausführung über die integrierte portable Umgebung (Schnellstart)
+
+Falls Sie das Projekt direkt über die im Repository enthaltenen portablen Tools starten möchten, führen Sie folgende Schritte aus:
+
+### Schritt 1: MariaDB-Datenbank starten
+Öffnen Sie ein PowerShell-Terminal im Projektordner und führen Sie aus:
+```powershell
+& "C:\Users\tief_\Desktop\Prüfung\tools\mariadb\bin\mysqld.exe" --datadir="C:\Users\tief_\Desktop\Prüfung\tools\mariadb\data" --port=3306 --console
+```
+*(Lassen Sie dieses Terminal geöffnet)*
+
+### Schritt 2: TomEE-Server starten
+Öffnen Sie ein **zweites** PowerShell-Terminal im Projektordner und führen Sie aus:
+```powershell
+$env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-17.0.19.10-hotspot"
+$env:CATALINA_HOME="C:\Users\tief_\Desktop\Prüfung\tools\tomee"
+& "C:\Users\tief_\Desktop\Prüfung\tools\tomee\bin\catalina.bat" run
+```
+*(Lassen Sie auch dieses Terminal geöffnet)*
+
+### Schritt 3: Webanwendung aufrufen
+Öffnen Sie Ihren Webbrowser und gehen Sie auf:
+`http://localhost:8080/herozero/`
+
+---
+
+## 5. Testen der Rollen und Funktionalitäten
 
 Das Projekt initialisiert beim ersten Start automatisch Testdaten und Standard-Benutzerkonten über die Klasse [DbInit.java](file:///c:/Users/tief_/Desktop/Prüfung/src/main/java/com/herozero/util/DbInit.java). Folgende Konten stehen zum Testen der Funktionalität bereit:
 
@@ -77,4 +103,3 @@ Das Projekt initialisiert beim ersten Start automatisch Testdaten und Standard-B
 3.  **Herausgeber (Publisher)**:
     *   **Benutzername**: `publisher` | **Passwort**: `admin123`
     *   Ermöglicht das Einsehen, Freigeben (`APPROVED`) oder Ablehnen von ausstehenden Datenänderungen im Dashboard. Erst nach der Freigabe sind die Werte in der Bürger-Ansicht sichtbar.
-
